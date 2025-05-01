@@ -4,7 +4,7 @@ import { db, auth } from './Firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import ShopkeeperLayout from './ShopkeeperLayout';
 import { toast } from 'react-toastify';
-
+import './Profile.css'; // Add your CSS styles here
 const Profile = () => {
   const [user] = useAuthState(auth);
   const [shopData, setShopData] = useState(null);
@@ -94,7 +94,7 @@ const Profile = () => {
   }
 
   return (
-    <ShopkeeperLayout>
+
       <div className="profile-page">
         <div className="profile-header">
           <h3>Shop Profile</h3>
@@ -255,7 +255,7 @@ const Profile = () => {
           </div>
         )}
       </div>
-    </ShopkeeperLayout>
+
   );
 };
 

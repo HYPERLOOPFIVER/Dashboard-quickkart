@@ -4,6 +4,7 @@ import { db, auth } from './Firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import ShopkeeperLayout from './ShopkeeperLayout';
 import { toast } from 'react-toastify';
+import './AddP.css'; // Add your CSS styles here
 
 const AddProduct = () => {
   const [user] = useAuthState(auth);
@@ -55,7 +56,7 @@ const AddProduct = () => {
   };
 
   return (
-    <ShopkeeperLayout>
+
       <div className="add-product">
         <h3>Add New Product</h3>
         <form onSubmit={handleSubmit}>
@@ -134,7 +135,7 @@ const AddProduct = () => {
           </button>
         </form>
       </div>
-    </ShopkeeperLayout>
+
   );
 };
 

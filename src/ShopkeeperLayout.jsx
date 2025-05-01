@@ -41,10 +41,7 @@ const ShopkeeperLayout = ({ children }) => {
   return (
     <div className="shopkeeper-layout">
       <Navbar shopName={shopData?.shopName} ownerName={shopData?.ownerName} />
-      <div className="page-header">
-        <h2>Welcome, {shopData?.ownerName || 'Shopkeeper'}</h2>
-        <p>{shopData?.shopName}</p>
-      </div>
+     
       <div className="page-content">
         {children}
       </div>

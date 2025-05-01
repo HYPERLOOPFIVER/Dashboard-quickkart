@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './Firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import './Login.css'; // Add your CSS styles here
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +28,8 @@ const Login = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Shopkeeper Login</h2>
+        <h2 className='partners'>QuickMart Partners Portal</h2>
+        <h2 className='isk'>Shopkeeper Login</h2>
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <label>Email</label>

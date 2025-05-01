@@ -1,0 +1,166 @@
+/* ProfilePage.css */
+.profile-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  
+  .profile-header h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0;
+    font-weight: 600;
+  }
+  
+  .btn-edit, .btn-save {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+  }
+  
+  .btn-edit {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+  }
+  
+  .btn-edit:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .btn-save {
+    background-color: #3b82f6;
+    color: white;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  .btn-save:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Form Styling */
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    color: #4b5563;
+    font-size: 0.95rem;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+    background-color: #f9fafb;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  
+  /* Profile Details Styling */
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+  }
+  
+  .detail-row {
+    display: flex;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    color: #4b5563;
+    min-width: 150px;
+  }
+  
+  .detail-value {
+    color: #1f2937;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .profile-page {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    
+    .detail-row {
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    
+    .detail-label {
+      min-width: auto;
+    }
+  }
+  
+  /* Loading state */
+  .profile-page:has(.loading) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 1.2rem;
+    color: #6b7280;
+  }

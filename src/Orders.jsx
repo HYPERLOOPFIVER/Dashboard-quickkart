@@ -114,14 +114,14 @@ const ShopkeeperOrders = () => {
     try {
       const orderRef = doc(db, "orders", orderId);
       await updateDoc(orderRef, {
-        paymentStatus: "completed",
+        paymentStatus: "paid",
         cashReceivedAt: new Date()
       });
       
       // Update local state
       setOrders(orders.map(order => 
         order.id === orderId 
-          ? { ...order, paymentStatus: "completed", cashReceivedAt: new Date() } 
+          ? { ...order, paymentStatus: "paid", cashReceivedAt: new Date() } 
           : order
       ));
       
@@ -129,7 +129,7 @@ const ShopkeeperOrders = () => {
       if (selectedOrder && selectedOrder.id === orderId) {
         setSelectedOrder(prev => ({ 
           ...prev, 
-          paymentStatus: "completed", 
+          paymentStatus: "paid", 
           cashReceivedAt: new Date() 
         }));
       }
@@ -404,7 +404,7 @@ const ShopkeeperOrders = () => {
               
               <div className="order-card-footer">
                 <div className={`payment-status ${order.paymentStatus}`}>
-                  {order.paymentStatus === 'completed' ? 'Payment completed' : `Payment: ${order.paymentStatus}`}
+                  {order.paymentStatus === 'paid' ? 'Payment paid' : `Payment: ${order.paymentStatus}`}
                 </div>
                 <div className="order-details-link">
                   View Details <ChevronRight size={16} />
@@ -429,47 +429,54 @@ const ShopkeeperOrders = () => {
               </div>
             </div>
             
-            <div className="order-timeline">
-              <div className={`timeline-step ${selectedOrder.status !== 'canceled' ? 'active' : 'canceled'}`}>
-                <div className="timeline-icon">
-                  <Clock size={16} />
+            {selectedOrder.status === 'canceled' ? (
+              <div className="order-canceled-banner">
+                <XCircle size={24} />
+                <h3>Order Cancelled</h3>
+              </div>
+            ) : (
+              <div className="order-timeline">
+                <div className={`timeline-step ${selectedOrder.status !== 'canceled' ? 'active' : 'canceled'}`}>
+                  <div className="timeline-icon">
+                    <Clock size={16} />
+                  </div>
+                  <div className="timeline-content">
+                    <p className="timeline-title">Order Placed</p>
+                    <p className="timeline-time">{formatDate(selectedOrder.createdAt)}</p>
+                  </div>
                 </div>
-                <div className="timeline-content">
-                  <p className="timeline-title">Order Placed</p>
-                  <p className="timeline-time">{formatDate(selectedOrder.createdAt)}</p>
+                
+                <div className={`timeline-step ${selectedOrder.status === 'processing' || selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                  <div className="timeline-icon">
+                    <Package size={16} />
+                  </div>
+                  <div className="timeline-content">
+                    <p className="timeline-title">Processing</p>
+                    <p className="timeline-time">{selectedOrder.processingAt ? formatDate(selectedOrder.processingAt) : '-'}</p>
+                  </div>
+                </div>
+                
+                <div className={`timeline-step ${selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                  <div className="timeline-icon">
+                    <Truck size={16} />
+                  </div>
+                  <div className="timeline-content">
+                    <p className="timeline-title">Shipped</p>
+                    <p className="timeline-time">{selectedOrder.shippedAt ? formatDate(selectedOrder.shippedAt) : '-'}</p>
+                  </div>
+                </div>
+                
+                <div className={`timeline-step ${selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                  <div className="timeline-icon">
+                    <CheckCircle size={16} />
+                  </div>
+                  <div className="timeline-content">
+                    <p className="timeline-title">Delivered</p>
+                    <p className="timeline-time">{selectedOrder.deliveredAt ? formatDate(selectedOrder.deliveredAt) : '-'}</p>
+                  </div>
                 </div>
               </div>
-              
-              <div className={`timeline-step ${selectedOrder.status === 'processing' || selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
-                <div className="timeline-icon">
-                  <Package size={16} />
-                </div>
-                <div className="timeline-content">
-                  <p className="timeline-title">Processing</p>
-                  <p className="timeline-time">{selectedOrder.processingAt ? formatDate(selectedOrder.processingAt) : '-'}</p>
-                </div>
-              </div>
-              
-              <div className={`timeline-step ${selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
-                <div className="timeline-icon">
-                  <Truck size={16} />
-                </div>
-                <div className="timeline-content">
-                  <p className="timeline-title">Shipped</p>
-                  <p className="timeline-time">{selectedOrder.shippedAt ? formatDate(selectedOrder.shippedAt) : '-'}</p>
-                </div>
-              </div>
-              
-              <div className={`timeline-step ${selectedOrder.status === 'delivered' ? 'active' : ''}`}>
-                <div className="timeline-icon">
-                  <CheckCircle size={16} />
-                </div>
-                <div className="timeline-content">
-                  <p className="timeline-title">Delivered</p>
-                  <p className="timeline-time">{selectedOrder.deliveredAt ? formatDate(selectedOrder.deliveredAt) : '-'}</p>
-                </div>
-              </div>
-            </div>
+            )}
             
             <div className="order-details-grid">
               <div className="details-section customer-section">
@@ -660,7 +667,7 @@ const ShopkeeperOrders = () => {
               )}
               
               {selectedOrder.paymentMethod === "cash" && 
-               selectedOrder.paymentStatus !== "completed" && (
+               selectedOrder.paymentStatus !== "paid" && (
                 <button 
                   className="action-button cash"
                   onClick={() => confirmCashReceived(selectedOrder.id)}

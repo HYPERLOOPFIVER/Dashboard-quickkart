@@ -4,7 +4,7 @@ import { auth, db } from './Firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import './Signup.css'; // Add your CSS styles here
 const Signup = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -82,7 +82,8 @@ const Signup = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Shopkeeper Signup</h2>
+        <h2>Welcome to QuickMart's Partners Portal</h2>
+        <h2>Signup</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Owner Name</label>
