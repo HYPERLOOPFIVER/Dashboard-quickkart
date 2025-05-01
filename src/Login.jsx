@@ -3,19 +3,31 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './Firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import './Login.css'; // Add your CSS styles here
-const Login = () => {
+import './Login.css';
+
+const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Store user authentication data in localStorage
+      localStorage.setItem('authToken', userCredential.user.accessToken);
+      localStorage.setItem('userId', userCredential.user.uid);
+      localStorage.setItem('userEmail', userCredential.user.email);
+      
+      // Update authentication state
+      if (setIsAuthenticated) {
+        setIsAuthenticated(true);
+      }
+      
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
@@ -24,7 +36,7 @@ const Login = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="auth-container">
       <div className="auth-card">
