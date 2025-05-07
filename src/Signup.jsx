@@ -82,7 +82,9 @@ const Signup = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Welcome to QuickMart's Partners Portal</h2>
+        <h2>Welcome to LakesMart's Partners Portal</h2>
+        <span className="slo">LakesMart is The First QuickCommerce App In Nainital</span>
+
         <h2>Signup</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">

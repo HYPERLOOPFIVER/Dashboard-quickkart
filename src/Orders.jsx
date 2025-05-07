@@ -327,7 +327,7 @@ const ShopkeeperOrders = () => {
           </button>
           <button 
             className={`filter-btn ${filterStatus === 'shipped' ? 'active' : ''}`}
-            onClick={() => setFilterStatus('shipped')}
+            onClick={() => setFilterStatus('delivered')}
           >
             Shipped
           </button>

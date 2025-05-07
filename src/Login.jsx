@@ -40,7 +40,8 @@ const Login = ({ setIsAuthenticated }) => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className='partners'>QuickMart Partners Portal</h2>
+        <h2 className='partners'>LakesMart Partners Portal</h2>
+        <span className="slo">LakesMart is The First QuickCommerce App In Nainital</span>
         <h2 className='isk'>Shopkeeper Login</h2>
         <form onSubmit={handleLogin}>
           <div className="form-group">
