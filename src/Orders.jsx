@@ -80,10 +80,12 @@ const ShopkeeperOrders = () => {
       };
       
       // Add timestamp based on status
-      if (newStatus === "processing") {
-        updateData.processingAt = new Date();
-      } else if (newStatus === "shipped") {
-        updateData.shippedAt = new Date();
+      if (newStatus === "preparing") {
+        updateData.preparingAt = new Date();
+      } else if (newStatus === "dispatched") {
+        updateData.dispatchedAt = new Date();
+      } else if (newStatus === "arrived") {
+        updateData.arrivedAt = new Date();
       } else if (newStatus === "delivered") {
         updateData.deliveredAt = new Date();
       }
@@ -115,13 +117,21 @@ const ShopkeeperOrders = () => {
       const orderRef = doc(db, "orders", orderId);
       await updateDoc(orderRef, {
         paymentStatus: "paid",
-        cashReceivedAt: new Date()
+        status: "delivered",
+        cashReceivedAt: new Date(),
+        deliveredAt: new Date()
       });
       
       // Update local state
       setOrders(orders.map(order => 
         order.id === orderId 
-          ? { ...order, paymentStatus: "paid", cashReceivedAt: new Date() } 
+          ? { 
+              ...order, 
+              paymentStatus: "paid", 
+              status: "delivered",
+              cashReceivedAt: new Date(),
+              deliveredAt: new Date()
+            } 
           : order
       ));
       
@@ -129,12 +139,14 @@ const ShopkeeperOrders = () => {
       if (selectedOrder && selectedOrder.id === orderId) {
         setSelectedOrder(prev => ({ 
           ...prev, 
-          paymentStatus: "paid", 
-          cashReceivedAt: new Date() 
+          paymentStatus: "paid",
+          status: "delivered",
+          cashReceivedAt: new Date(),
+          deliveredAt: new Date()
         }));
       }
       
-      showToast("Cash payment confirmed successfully");
+      showToast("Cash payment confirmed and order marked as delivered");
     } catch (err) {
       console.error("Error confirming cash payment: ", err);
       showToast("Failed to confirm cash payment", 'error');
@@ -154,8 +166,9 @@ const ShopkeeperOrders = () => {
           ...orderData,
           id: orderSnap.id,
           createdAt: orderData.createdAt?.toDate?.() || new Date(),
-          processingAt: orderData.processingAt?.toDate?.(),
-          shippedAt: orderData.shippedAt?.toDate?.(),
+          preparingAt: orderData.preparingAt?.toDate?.(),
+          dispatchedAt: orderData.dispatchedAt?.toDate?.(),
+          arrivedAt: orderData.arrivedAt?.toDate?.(),
           deliveredAt: orderData.deliveredAt?.toDate?.(),
           paidAt: orderData.paidAt?.toDate?.(),
           cashReceivedAt: orderData.cashReceivedAt?.toDate?.()
@@ -215,10 +228,12 @@ const ShopkeeperOrders = () => {
     switch(status) {
       case 'pending':
         return <Clock size={16} />;
-      case 'processing':
+      case 'preparing':
         return <Package size={16} />;
-      case 'shipped':
+      case 'dispatched':
         return <Truck size={16} />;
+      case 'arrived':
+        return <CheckCircle size={16} />;
       case 'delivered':
         return <CheckCircle size={16} />;
       case 'canceled':
@@ -320,16 +335,22 @@ const ShopkeeperOrders = () => {
             Pending
           </button>
           <button 
-            className={`filter-btn ${filterStatus === 'processing' ? 'active' : ''}`}
-            onClick={() => setFilterStatus('processing')}
+            className={`filter-btn ${filterStatus === 'preparing' ? 'active' : ''}`}
+            onClick={() => setFilterStatus('preparing')}
           >
-            Processing
+            Preparing
           </button>
           <button 
-            className={`filter-btn ${filterStatus === 'shipped' ? 'active' : ''}`}
-            onClick={() => setFilterStatus('delivered')}
+            className={`filter-btn ${filterStatus === 'dispatched' ? 'active' : ''}`}
+            onClick={() => setFilterStatus('dispatched')}
           >
-            Shipped
+            Dispatched
+          </button>
+          <button 
+            className={`filter-btn ${filterStatus === 'arrived' ? 'active' : ''}`}
+            onClick={() => setFilterStatus('arrived')}
+          >
+            Arrived
           </button>
           <button 
             className={`filter-btn ${filterStatus === 'delivered' ? 'active' : ''}`}
@@ -446,23 +467,33 @@ const ShopkeeperOrders = () => {
                   </div>
                 </div>
                 
-                <div className={`timeline-step ${selectedOrder.status === 'processing' || selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                <div className={`timeline-step ${selectedOrder.status === 'preparing' || selectedOrder.status === 'dispatched' || selectedOrder.status === 'arrived' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
                   <div className="timeline-icon">
                     <Package size={16} />
                   </div>
                   <div className="timeline-content">
-                    <p className="timeline-title">Processing</p>
-                    <p className="timeline-time">{selectedOrder.processingAt ? formatDate(selectedOrder.processingAt) : '-'}</p>
+                    <p className="timeline-title">Preparing</p>
+                    <p className="timeline-time">{selectedOrder.preparingAt ? formatDate(selectedOrder.preparingAt) : '-'}</p>
                   </div>
                 </div>
                 
-                <div className={`timeline-step ${selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                <div className={`timeline-step ${selectedOrder.status === 'dispatched' || selectedOrder.status === 'arrived' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
                   <div className="timeline-icon">
                     <Truck size={16} />
                   </div>
                   <div className="timeline-content">
-                    <p className="timeline-title">Shipped</p>
-                    <p className="timeline-time">{selectedOrder.shippedAt ? formatDate(selectedOrder.shippedAt) : '-'}</p>
+                    <p className="timeline-title">Dispatched</p>
+                    <p className="timeline-time">{selectedOrder.dispatchedAt ? formatDate(selectedOrder.dispatchedAt) : '-'}</p>
+                  </div>
+                </div>
+                
+                <div className={`timeline-step ${selectedOrder.status === 'arrived' || selectedOrder.status === 'delivered' ? 'active' : ''}`}>
+                  <div className="timeline-icon">
+                    <CheckCircle size={16} />
+                  </div>
+                  <div className="timeline-content">
+                    <p className="timeline-title">Arrived</p>
+                    <p className="timeline-time">{selectedOrder.arrivedAt ? formatDate(selectedOrder.arrivedAt) : '-'}</p>
                   </div>
                 </div>
                 
@@ -636,59 +667,75 @@ const ShopkeeperOrders = () => {
             )}
             
             <div className="modal-actions">
-              {selectedOrder.status === "pending" && (
-                <button 
-                  className="action-button process"
-                  onClick={() => updateOrderStatus(selectedOrder.id, "processing")}
-                >
-                  <Package size={16} />
-                  Process Order
-                </button>
-              )}
-              
-              {selectedOrder.status === "processing" && (
-                <button 
-                  className="action-button ship"
-                  onClick={() => updateOrderStatus(selectedOrder.id, "shipped")}
-                >
-                  <Truck size={16} />
-                  Mark as Shipped
-                </button>
-              )}
-              
-              {selectedOrder.status === "shipped" && (
-                <button 
-                  className="action-button deliver"
-                  onClick={() => updateOrderStatus(selectedOrder.id, "delivered")}
-                >
-                  <CheckCircle size={16} />
-                  Mark as Delivered
-                </button>
-              )}
-              
-              {selectedOrder.paymentMethod === "cash" && 
-               selectedOrder.paymentStatus !== "paid" && (
-                <button 
-                  className="action-button cash"
-                  onClick={() => confirmCashReceived(selectedOrder.id)}
-                >
-                  <DollarSign size={16} />
-                  Confirm Cash Received
-                </button>
-              )}
-              
-              {selectedOrder.status !== "canceled" && selectedOrder.status !== "delivered" && (
-                <button 
-                  className="action-button cancel"
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to cancel this order?")) {
-                      updateOrderStatus(selectedOrder.id, "canceled");
-                    }
-                  }}
-                >
-                  <XCircle size={16} />
-                  Cancel Order
-                </button>
+              {selectedOrder.status !== "canceled" && (
+                <>
+                  {selectedOrder.status === "pending" && (
+                    <button 
+                      className="action-button process"
+                      onClick={() => updateOrderStatus(selectedOrder.id, "preparing")}
+                    >
+                      <Package size={16} />
+                      Process Order
+                    </button>
+                  )}
+                  
+                  {selectedOrder.status === "preparing" && (
+                    <button 
+                      className="action-button ship"
+                      onClick={() => updateOrderStatus(selectedOrder.id, "dispatched")}
+                    >
+                      <Truck size={16} />
+                      Ready for Delivery
+                    </button>
+                  )}
+                  
+                  {selectedOrder.status === "dispatched" && (
+                    <button 
+                      className="action-button deliver"
+                      onClick={() => updateOrderStatus(selectedOrder.id, "arrived")}
+                    >
+                      <CheckCircle size={16} />
+                      Mark as Arrived
+                    </button>
+                  )}
+                  
+                  {selectedOrder?.status === "payment" && 
+ selectedOrder?.paymentMethod === "cash" && 
+ selectedOrder?.paymentStatus !== "paid" && (
+  <button 
+    className="action-button cash"
+    onClick={() => confirmCashReceived(selectedOrder.id)}
+  >
+    <DollarSign size={16} />
+    Cash Received
+  </button>
+)}
+                  
+                  {selectedOrder.status === "arrived" && 
+                   selectedOrder.paymentMethod !== "cash" && (
+                    <button 
+                      className="action-button deliver"
+                      onClick={() => updateOrderStatus(selectedOrder.id, "delivered")}
+                    >
+                      <CheckCircle size={16} />
+                      Mark as Delivered
+                    </button>
+                  )}
+                  
+                  {selectedOrder.status !== "delivered" && (
+                    <button 
+                      className="action-button cancel"
+                      onClick={() => {
+                        if (window.confirm("Are you sure you want to cancel this order?")) {
+                          updateOrderStatus(selectedOrder.id, "canceled");
+                        }
+                      }}
+                    >
+                      <XCircle size={16} />
+                      Cancel Order
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
